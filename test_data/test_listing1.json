@@ -1,0 +1,83 @@
+{
+  "homeContext": "217 4th Court S #7, Kirkland, WA 98033 — 4 bed, 3.5 bath, 2,410 sqft modern home built in 2019 with open-concept layout, chef’s kitchen, solar panels, landscaped yard, and 2-car garage; $874,900 — walkable to Beresford Park, zoned for Laurel Elementary, HOA $185/month.",
+  "homeDetails": {
+    "title": "1234 Sample Home  Address",
+    "description": "Carved directly into the western cliffs of Westeros, Casterly Rock offers commanding views of the Sunset Sea and a legacy unrivaled by any noble seat in the Seven Kingdoms. This majestic stone stronghold boasts towering halls, vaulted treasure chambers, and intricate lion-carved passageways — all hewn from solid rock and lit by golden candlelight. Generations of Lannisters have called this fortress home, where wealth flows as freely as Lannisport wine and security is absolute. Whether you seek grandeur, strategic coastal access, or the whispers of ancient Valyrian steel sealed deep in the mountain’s roots, Casterly Rock stands ready to impress lords and legends alike.",
+    "images": [
+      {
+        "link": "assets/test_listing_1_photos/details01.jpg",
+        "caption": "The Great Hall — where bannermen once feasted under roaring torches and whispered treason over goblets of Arbor gold."
+      },
+      {
+        "link": "assets/test_listing_1_photos/details02.jpg",
+        "caption": "Sun-drenched solar with ocean views — ideal for plotting dynastic marriages or just enjoying a quiet raven scroll."
+      },
+      {
+        "link": "assets/test_listing_1_photos/details03.jpg",
+        "caption": "Vaulted chamber with stonework so fine even a maester would weep. May contain echoes of Lannister lectures."
+      },
+      {
+        "link": "assets/test_listing_1_photos/details04.jpg",
+        "caption": "Anteroom suited for parley, private counsel, or brooding silently in front of a fire while plotting your enemies’ downfall."
+      },
+      {
+        "link": "assets/test_listing_1_photos/details05.jpg",
+        "caption": "A noble bedroom retreat with heavy drapes, dragonproof windows, and ample space for nightly existential dread."
+      }
+    ]
+  },
+  "ownerUpgrades": "Recent enhancements to the stronghold ensure it remains fit for both winter siege and summer court. A newly installed HVAC system (2023) channels warmth through the stone corridors like dragonfire through Valyrian steel — silent, efficient, and unrelenting. The energy-efficient windows, forged to withstand both storm and scrutiny, now flood the chambers with daylight fit for a Hand of the King. Meanwhile, the kitchens have been tastefully remodeled with quartz countertops — smooth as the marble of Oldtown and durable enough to survive both feast and famine. As Tyrion Lannister might say, 'One needn’t choose between comfort and conquest when one can afford both.'",
+  "plans": {
+    "title": "Available Floor Plans",
+    "description": "Each level of Casterly Rock is a testament to ancient craftsmanship and modern adaptability. The main hall features a grand throne chamber with adjoining council rooms and banquet space, ideal for entertaining bannermen or hosting high feasts. Private family quarters are nestled into the upper spires, offering panoramic sea views and secured inner sanctums. Below, the lower levels include servant wings, a robust armory, and access to the treasury vaults and lion-carved war tunnels. From hidden passageways to sunlit terraces above Lannisport, every square foot balances opulence with fortified utility.",
+    "images": [
+      {
+        "link": "assets/test_listing_1_photos/floorPlan1.jpg",
+        "caption": "Where oaths are made and broken — a hall worthy of kings, usurpers, and awkward family reunions."
+      },
+      {
+        "link": "assets/test_listing_1_photos/floorPlan2.jpg",
+        "caption": "Golden light spills through arched windows — a perfect setting for idle gossip or secret alliance-making."
+      },
+      {
+        "link": "assets/test_listing_1_photos/floorPlan3.jpg",
+        "caption": "Stone vaulted ceilings echo with history — and occasionally, the sound of steel being unsheathed in disagreement."
+      }
+    ]
+  },
+  "faq": [
+    {
+      "q": "Is Casterly Rock move-in ready?",
+      "a": "The keep is fully staffed and fortified. No dragons have breached the walls in over a century."
+    },
+    {
+      "q": "Does the property come furnished?",
+      "a": "Yes, the home includes antique furnishings, gold inlays, and banners bearing the proud lion of House Lannister."
+    },
+    {
+      "q": "What is the estimated property tax?",
+      "a": "As Warden of the West, you collect the taxes. You do not pay them."
+    },
+    {
+      "q": "Is the Rock accessible year-round?",
+      "a": "Casterly Rock offers direct passage to Lannisport and remains accessible in all seasons — even during siege."
+    },
+    {
+      "q": "Are there security features?",
+      "a": "In addition to solid stone walls and battlements, the property includes a standing garrison and a discreet assassin deterrence policy."
+    },
+    {
+      "q": "Can I bring my direwolf?",
+      "a": "Yes. Though Lannisters prefer lions, the kennels are spacious and reinforced for larger companions."
+    },
+    {
+      "q": "Who maintains the vaults?",
+      "a": "The vaults are overseen by trusted stewards trained in discretion. Gold is stored beneath the Rock — not counted aloud in halls."
+    }
+  ],
+  "ownerHello": "I am Tywin Lannister, Lord of Casterly Rock. This fortress has stood for thousands of years — not merely as a home, but as a declaration of power, precision, and permanence. Within these walls, I raised a dynasty, commanded armies, and shaped the course of kingdoms. Every stone has purpose; every hall, discipline. Should you inherit these halls, know this: Casterly Rock does not coddle — it cultivates legacy. If you are prepared to carry that weight, then you are welcome to walk these grounds as master.",
+  "buyAndSellWithHomeWrite": {
+    "text": "Like what you see? Every Homewrite listing receives medina level marketing, so you know exactly what you're going to get.",
+    "image": "assets/test_listing_1_photos/sample_qr_code.png"
+  }
+}

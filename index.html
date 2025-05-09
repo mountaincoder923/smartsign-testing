@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <title>HOMEWRITE Display — OptiSign Full‑Screen</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+    <style>
+        /*****************************************************************
+         * GLOBAL TYPOGRAPHY SCALING
+         * ---------------------------------------------------------------
+         * Dynamically adjusts the root font size from 16px (mobile) to
+         * 20px (4K portrait) based on viewport width. This governs the
+         * rem-based sizing scale across the system.
+         * — QUICK TUNING: Adjust 14px or 20px values to globally resize.
+         *****************************************************************/
+        html {
+            font-size: clamp(16px, 0.52vw + 14px, 20px);
+        }
+
+        /*****************************************************************
+         * ORB BRANDING CONFIGURATION
+         * ---------------------------------------------------------------
+         * Defines brand-specific gradient and glow color tokens for the
+         * animated orb component, along with timing values for animation.
+         *****************************************************************/
+        :root {
+            --orb-primary: #3b2ce1;     /* primary hue for orb gradient */
+            --orb-secondary: #c115ca;   /* secondary hue for gradient blend */
+            --orb-glow: rgb(136, 215, 250); /* glow effect applied externally */
+            --orb-gradient-speed: 6s;   /* full cycle duration for gradient shift */
+            --orb-breathe-speed: 4s;    /* breathing pulse rhythm */
+        }
+
+        /* Orb visual behavior: background motion, pulsing, glow effects */
+        @keyframes orb-gradient-move {
+            0% { background-position: 0 50%; }
+            100% { background-position: 50% 100%; }
+        }
+
+        @keyframes orb-breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes orb-swirl-rotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        @keyframes orb-shadow {
+            0%, 100% { box-shadow: 0 0 0 var(--orb-glow); }
+            50% { box-shadow: 0 0 200px var(--orb-glow); }
+        }
+
+        @keyframes orb-text-glow {
+            0%, 100% { opacity: .7; text-shadow: 0 0 2px var(--orb-glow); }
+            50% { opacity: 1; text-shadow: 0 0 8px var(--orb-glow); }
+        }
+
+        /*****************************************************************
+         * ORB CONTAINER DIMENSIONS
+         * ---------------------------------------------------------------
+         * Responsive sizing for the animated orb based on viewport width.
+         * Clamp ensures reasonable sizing on both mobile and 4K displays.
+         * — QUICK TUNING: Adjust 22vw or the rem limits for sizing control.
+         *****************************************************************/
+        .orb-container {
+            width: clamp(23rem, 25vw, 33rem);
+            height: clamp(23rem, 25vw, 33rem);
+            position: relative;
+            isolation: isolate;
+        }
+
+        /* Orb component layers and effects */
+        #chat-orb {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            position: relative;
+            outline: none;
+            animation:
+                    orb-breathe var(--orb-breathe-speed) ease-in-out infinite,
+                    orb-shadow var(--orb-breathe-speed) ease-in-out infinite;
+        }
+
+        #chat-orb::before {
+            content: "";
+            position: absolute;
+            inset: -35%;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--orb-secondary) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(56px);
+            z-index: -1;
+        }
+
+        .orb-inner {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(
+                    from 0deg,
+                    var(--orb-primary) 0deg,
+                    var(--orb-secondary) 120deg,
+                    var(--orb-primary) 240deg,
+                    var(--orb-secondary) 360deg
+            );
+            filter: blur(15px);
+            box-shadow: 0 0 60px var(--orb-secondary);
+            animation: orb-swirl-rotate 20s linear infinite;
+        }
+
+        .orb-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            backdrop-blur: 8px;
+        }
+
+        #orb-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 3;
+            color: white;
+            font-size: 1rem;
+            animation: orb-text-glow 2s ease-in-out infinite;
+        }
+
+        /*****************************************************************
+        * ORBIT DOT COMPONENT STYLES
+        * ---------------------------------------------------------------
+        * Adjust top: and left: percentages to adjust center of orbit.
+        *****************************************************************/
+
+        /*noinspection CssUnusedSymbol*/
+        .orbit-dot {
+            position: absolute;
+            top: 32.5%;
+            left: 50%;
+            z-index: -1;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--orb-secondary);
+            box-shadow: 0 0 6px var(--orb-glow), 0 0 12px var(--orb-glow);
+            transform-origin: center;
+        }
+
+        /*****************************************************************
+         * INFO CARD COMPONENT STYLES
+         * ---------------------------------------------------------------
+         * Styling for expandable FAQ sections with summary headers and
+         * collapsible details content. Subtle hover and open states are
+         * included for visual feedback.
+         *****************************************************************/
+        .info-card {
+            border-radius: .9rem;
+            overflow: hidden;
+            background: transparent;
+            margin: 0;
+        }
+
+        .info-card > summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            padding: 1.4rem;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, .08);
+            border-radius: .9rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: background .25s, box-shadow .25s, border-color .25s;
+        }
+
+        .info-card > summary:hover,
+        .info-card > summary:focus-visible {
+            background: #f5f5f7;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+
+        .info-card[open] > summary {
+            background: #f9f9fb;
+            border-color: rgba(0, 0, 0, .06);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+        }
+
+        .info-card summary::marker,
+        .info-card summary::-webkit-details-marker {
+            content: none;
+        }
+
+
+        /*****************************************************************
+         * CARD INTERACTION: ANIMATED BORDER
+         *****************************************************************/
+        @keyframes pulse-blue-border {
+            0% { box-shadow: 0 0 0 0 rgb(193, 21, 202); }
+            70% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        button.info-card {
+            border: 1px solid rgb(193, 21, 202);
+            animation: pulse-blue-border 3s ease-out infinite;
+        }
+
+        /*****************************************************************
+         * CHATBOX DIMENSIONS & PULSE EFFECT
+         *****************************************************************/
+        :root {
+            --chatbox-pulse-color: rgb(137, 154, 255);
+            --chatbox-pulse-spread: 8px;
+            --chatbox-pulse-duration: 3s;
+        }
+
+        @keyframes chatbox-pulse-border {
+            0% { box-shadow: 0 0 0 0 var(--chatbox-pulse-color); }
+            70% { box-shadow: 0 0 0 var(--chatbox-pulse-spread) rgba(59,130,246,0); }
+            100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+        }
+
+        /* Base constraint: scaled up for ultra HD via media queries */
+        #chatbox-window {
+            border: 3px solid var(--chatbox-pulse-color);
+            border-radius: 1rem;
+            animation: chatbox-pulse-border var(--chatbox-pulse-duration) ease-out infinite;
+            max-width: 1400px;
+            max-height: 1200px;
+        }
+
+        @media (min-width: 1600px) {
+            #chatbox-window {
+                max-width: 1600px;
+                max-height: 1400px;
+            }
+        }
+
+        /*****************************************************************
+         * ONSCREEN KEYBOARD STYLING
+         *****************************************************************/
+        #chatbox-window .key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            padding: 1rem 1.2rem;
+            margin: 0.1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            user-select: none;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .key.spacebar {
+            min-width: 12rem;
+            padding: 0 3rem;
+            text-align: center;
+        }
+
+
+        /*****************************************************************
+         * SECTION GRID SIZING
+         * ---------------------------------------------------------------
+         * Controls the vertical height of rows within the #sections grid.
+         * Dynamically scaled across breakpoints to adapt to screen size.
+         *****************************************************************/
+        #sections { grid-auto-rows: 12rem; }
+
+        @media (min-width: 1024px) {
+            #sections { grid-auto-rows: 18vh; }
+        }
+
+        @media (min-width: 1600px) {
+            #sections { grid-auto-rows: 20vh; }
+        }
+    </style>
+</head>
+<body class="w-screen h-screen overflow-visible text-black">
+<main class="flex flex-col w-full h-full">
+    <!-- Header -->
+    <div class="bg-white w-full flex items-center justify-center py-4 shadow-md">
+        <img src="assets/homewrite_logo.png" alt="HOMEWRITE Logo" class="h-36 w-auto"/>
+    </div>
+
+    <!-- Orb (unchanged) -->
+    <section class="relative flex-[0.7] flex items-center justify-center overflow-visible mt-28">
+        <div class="orb-container">
+            <button id="chat-orb" aria-label="Open Chatbot">
+                <div class="orb-inner animate-gradient"></div>
+                <div class="orb-overlay"></div>
+                <div id="orb-text" class="absolute inset-0 flex items-center justify-center text-white/90 text-4xl font-medium tracking-wide animate-fadeGlow transition-opacity duration-500 opacity-100 z-30 text-center"></div>
+                <div id="particle-track" class="absolute inset-0"></div>
+            </button>
+        </div>
+    </section>
+
+    <!-- Chatbox (Initially Hidden) -->
+    <div id="chatbox-container" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-1000">
+        <div id="chatbox-window" class="w-[90vw] h-[95vh] max-w-[1400px] max-h-[1200px] bg-white/90 backdrop-blur-md rounded-xl shadow-xl flex flex-col overflow-hidden transition-all duration-1000 ease-in-out">
+            <!-- Exit Button -->
+            <div class="flex justify-end p-2 space-x-2">
+                <button onclick="closeChatbox()" class="text-2xl text-gray-500 hover:text-black transition-transform hover:scale-110">&times;</button>
+            </div>
+
+            <!-- Recording Indicator -->
+            <div id="recordingIndicator" class="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-red-600 font-semibold text-sm opacity-0 transition-opacity duration-300">
+                <div class="relative w-3 h-3">
+                    <div class="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-75"></div>
+                    <div class="absolute inset-0 rounded-full bg-red-600"></div>
+                </div>
+                <span>Recording...</span>
+            </div>
+
+
+
+            <!-- Chat Area -->
+            <div class="flex flex-col flex-[2] overflow-hidden">
+                <div id="chatBox" class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                    <div class="flex justify-start">
+                        <div class="bg-gray-200 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%]">Hello! How can I help you today?</div>
+                    </div>
+                </div>
+                <div id="typingBubble" class="flex justify-start hidden">
+                    <div class="flex justify-center">
+                        <div id="typingText" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-3xl max-w-[100%] animate-pulse">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t bg-white">
+                    <form id="chatForm" class="flex gap-2">
+                        <label for="userInput" class="sr-only">Your message</label>
+                        <button type="button" id="audioButton" class="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 flex items-center gap-2">
+                            <span class="text-xl">🎤</span>
+                            <span>Talk To Me</span>
+                        </button>
+                        <input id="userInput" type="text" inputmode="none" placeholder="Type your message..."
+                               class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">Send</button>
+                    </form>
+                </div>
+            </div>
+
+
+
+            <!-- On‑screen Keyboard -->
+            <div id="onScreenKeyboard"
+                 class="flex-[1] bg-white/95 border-t p-3 space-y-2 overflow-y-auto select-none">
+
+                <!-- Row 1 -->
+                <div class="flex justify-center gap-1.5">
+                    <button class="key">Q</button><button class="key">W</button><button class="key">E</button>
+                    <button class="key">R</button><button class="key">T</button><button class="key">Y</button>
+                    <button class="key">U</button><button class="key">I</button><button class="key">O</button>
+                    <button class="key">P</button>
+                </div>
+
+                <!-- Row 2 (½‑key indent) -->
+                <div class="flex justify-center gap-1.5">
+                    <span class="w-3"></span> <!-- spacer -->
+                    <button class="key">A</button><button class="key">S</button><button class="key">D</button>
+                    <button class="key">F</button><button class="key">G</button><button class="key">H</button>
+                    <button class="key">J</button><button class="key">K</button><button class="key">L</button>
+                </div>
+
+                <!-- Row 3 (full‑key indent) -->
+                <div class="flex justify-center gap-1.5">
+                    <span class="w-7"></span> <!-- spacer -->
+                    <button class="key">Z</button><button class="key">X</button><button class="key">C</button>
+                    <button class="key">V</button><button class="key">B</button><button class="key">N</button>
+                    <button class="key">M</button>
+                </div>
+
+                <!-- Action row -->
+                <div class="flex justify-center items-center gap-1.5 mt-1">
+                    <button class="key px-5" data-action="shift">⇧</button>
+                    <button class="key">,</button>
+                    <button class="key spacebar flex-1 px-8">SPACE</button>
+                    <button class="key">.</button>
+                    <button class="key">?</button>
+                    <button class="key px-5 text-red-600" data-action="backspace">⌫</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Info Dropdowns / Navigation Cards -->
+    <section id="sections" class="grid grid-cols-3 gap-6 px-6 pb-8 mt-48">
+        <!-- Home Details -->
+        <button id="homeDetailsBtn" class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-house text-6xl" style="color: #3B2CE1;"></i>
+            <span class="text-2xl font-medium">Home Details</span>
+        </button>
+
+        <!-- Owner Upgrades -->
+        <button id="ownerUpgradesBtn" class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-screwdriver-wrench text-6xl" style="color: #3B2CE1;"></i>
+            <span class="text-2xl font-medium">Owner Upgrades</span>
+        </button>
+
+        <!-- Plans -->
+        <button id="plansBtn" class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-map text-6xl" style="color: #3B2CE1;"></i>
+            <span class="text-2xl font-medium">Plans</span>
+        </button>
+
+        <!-- FAQs -->
+        <button id="faqsBtn" class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-regular fa-circle-question text-6xl" style="color: #3B2CE1;"></i>
+            <span class="text-2xl font-medium">FAQs</span>
+        </button>
+
+        <!-- Owner Hello -->
+        <button id="ownerHelloBtn" class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-handshake-simple text-6xl" style="color: #3B2CE1;"></i>
+            <span class="text-2xl font-medium">Owner Hello</span>
+        </button>
+
+        <!-- Buy & Sell with Homewrite -->
+        <button id="buySellWithHomewriteBtn" class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-cart-shopping text-6xl" style="color: #3B2CE1;"></i>
+            <span class="text-2xl font-large">Buy with Homewrite</span>
+        </button>
+    </section>
+</main>
+
+<!-- Carousel Modal -->
+<div id="carouselModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-1000">
+    <div class="bg-white rounded-xl overflow-hidden relative p-8" style="width:90vw;max-width:1280px;height:auto;max-height:90vh;">
+        <button id="carouselCloseBtn" class="absolute top-4 right-4 z-50">&times;</button>
+        <h2 id="carouselModalTitle" class="text-2xl font-semibold text-center mb-4">Gallery</h2>
+
+        <div class="relative aspect-video overflow-hidden">
+            <div id="modalCarouselTrack" class="flex transition-transform duration-700 ease-out h-full"></div>
+            <button id="modalPrev" class="absolute top-1/2 left-2 -translate-y-1/2 p-2 bg-white rounded-full">&#8592;</button>
+            <button id="modalNext" class="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-white rounded-full">&#8594;</button>
+        </div>
+
+        <div class="mt-4 px-4">
+            <div id="modalCarouselCaption" class="text-center italic text-gray-700">Loading…</div>
+        </div>
+
+        <div class="mt-6 px-4 py-3 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+            <div id="carouselStaticDescription" class="text-sm text-center text-gray-600">All layouts are for demonstration purposes only.</div>
+        </div>
+    </div>
+</div>
+
+<!-- Text Modal -->
+<div id="textModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-1000 hidden">
+    <div class="bg-white rounded-xl overflow-hidden relative p-8" style="width:90vw;max-width:1280px;height:auto;max-height:90vh;">
+        <button onclick="closeText()" class="absolute top-4 right-4 text-2xl">&times;</button>
+        <h2 id="textModalTitle" class="text-2xl font-semibold mb-4">Details</h2>
+        <div id="textModalBody" class="text-base leading-relaxed">No details available.</div>
+        <div id="textModalImageWrapper" class="w-full flex justify-center mt-4 hidden">
+            <img id="textModalImage" src="" alt="" class="max-w-[50%] max-h-[40vh] object-contain rounded-md shadow"/>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
