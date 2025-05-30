@@ -1,0 +1,90 @@
+{
+  "homeContext": "Home address is 12915 212th St SE, Snohomish, WA 98296. Listing asking price is $1,699,000 USD. Echo lake golf course is 5 minutes away. Woodinville restaurants are 10 minutes drive. Home is private but there are neighbors a few minutes away. Owner is selling to move to be near family out of state. The detached garage can fit 4 cars or be a great shop area. Home is on septic and well. This is a two-level house with 3,057 square feet of living area, built in 2017 and on a lot of 5.75 acres. (per public records). The structure type is a house, and the entry is on the main level. The square footage and building area are both listed as 3,057 square feet according to public records.",
+  "homeDetails": {
+    "title": "12915 212th St SE",
+    "description": "Find Peace & Serenity in this park like 5+ Acre Estate. Expertly designed modern floor plan w/ plenty of room for everyone. 18 foot ceilings greet you upon entry through the oversized double doors. Open great room main floor. Sleek chefs kitchen has natural stone counters, elegant white cabinetry & complete w/ walk-in pantry. Extremely secluded yet conveniently located only a few minutes off Hwy 522.",
+    "images": [
+      {
+        "link": "assets/Web_01.webp",
+        "caption": ""
+      },
+      {
+        "link": "assets/Web_02.webp",
+        "caption": ""
+      },
+      {
+        "link": "assets/Web_03.webp",
+        "caption": ""
+      },
+      {
+        "link": "assets/Web_04.webp",
+        "caption": ""
+      },
+      {
+        "link": "assets/Web_05.webp",
+        "caption": ""
+      },
+      {
+        "link": "assets/Web_06.webp",
+        "caption": ""
+      },
+      {
+        "link": "assets/Web_07.webp",
+        "caption": ""
+      }
+    ]
+  },
+  "ownerUpgrades": "This home has seen several recent upgrades, including a swimming pool, hot tub, and outdoor sauna—perfect for year-round relaxation. Additionally, the interior was freshly painted in 2025, giving the home a clean and updated feel.",
+  "plans": {
+    "title": "Available Floor Plans",
+    "description": "Upstairs you will find 4 bedrooms highlighted by the primary suite w/ large walk in closet & stylish 5 piece bathroom. Massive bonus room upstairs as well. Store ALL of your toys in the 1,152 Sqft detached shop w/ 11’x12’ doors. Incredibly spacious back patio is perfect to spend summer evenings & has built in fire pit.",
+    "images": [
+      {
+        "link": "assets/floorplan_01.webp",
+        "caption": "Ground floor"
+      },
+      {
+        "link": "assets/floorplan_02.webp",
+        "caption": "Second floor"
+      }
+    ]
+  },
+  "faq": [
+    {
+      "q": "How big is the land?",
+      "a": "5.75 Acres"
+    },
+    {
+      "q": "What school district is the home in?",
+      "a": "Monroe School district"
+    },
+    {
+      "q": "Is there an HOA?",
+      "a": "No"
+    },
+    {
+      "q": "Is it on septic?",
+      "a": "Yes"
+    },
+    {
+      "q": "Is it on well?",
+      "a": "Yes"
+    }
+  ],
+  "ownerHello": "Our family has shared so many beautiful memories in this home—but one of our absolute favorites has always been sitting together on the back patio.\nWhether it was quiet mornings with coffee and birdsong, or evening talks while the kids played in the yard, there’s something magical about being surrounded by all the trees and plants.\nIt truly feels like you’re in a world of your own—peaceful, private, and full of life.\n\nThis home has been such a blessing to our family, and we hope it brings you just as much warmth, joy, and togetherness as it has brought us.\nIt’s a special place, and we’re excited for you to create your own memories here.",
+  "makeAnOffer": {
+    "text": "Contact our buyer's agent Tiffany at (253) 632-0886 or  tiffany@homewrite.com to make an offer.",
+    "image": "assets/tiffany_headshot.webp"
+  },
+  "banner": {
+    "display": true,
+    "content": "$45,000 towards a 2-1 Buy Down and a rate as low as 4.88% when you purchase with Homewrite.com"
+},
+  "footer":{
+    "header": "Our Mortgage Partner:",
+    "title": "Loan Officer Assistant",
+    "name": "Krysta Neary",
+    "email": "Krysta.Neary@Movement.com",
+    "phone": "(206) 817-2560"
+  }
+}
