@@ -1,6 +1,6 @@
 // ************************************* Global Configs *************************************
 // ───────────────────── Listing Source URL ──────────────────────
-const url = "test_data/test_listing1.json"
+let url = "";
 const chatBackend = "https://v3kooqon7vcjnyem5uf3euda2e0qzbyx.lambda-url.us-east-1.on.aws";
 const voiceBackend = "https://lgvpc3tniusyh5osnv2e6efzie0iwutx.lambda-url.us-east-1.on.aws";
 
@@ -9,14 +9,14 @@ const config = {
     dotCount: 60,                  // how many dots
     colors: ['rgba(59,44,225,0.53)', 'rgba(255,0,234,0.82)'],
     dotSize: 6,                   // diameter in px
-    radius: { min: 225, max: 325 }, // orbit radius range in px
+    radius: {min: 225, max: 325}, // orbit radius range in px
     speed: {                       // rotations per second
         min: 0.085,                    // slowest: full circle in 10s
         max: 0.09                     // fastest: full circle in ~3.3s
     },
     pulse: {
         min: 0.7,   // minimum scale size
-        max: 1.4,  // maximum scale size
+        max: 1.6,  // maximum scale size
         speed: 250  // smaller = faster pulse
     }
 };
@@ -38,27 +38,31 @@ const AltOrbMessages = [
     "ٹَچ کریں مدد کے لیے",                         // Farsi alt with more casual "Touch" phrasing
     "Mag-tap para sa tulong",                     // Tagalog (very natural for touchscreen prompts)
 ];
-const DefaultInputMessage = "Ask me anything!"
+const DefaultInputMessage = "Ask me a question in any language";
 
 const AltInputMessages = [
-    "Спросите меня о чём угодно",               // Russian
-    "随便问我什么",                               // Chinese (Simplified, conversational tone)
-    "Hãy hỏi tôi bất cứ điều gì",               // Vietnamese
-    "Pregúntame lo que sea",                    // Spanish (neutral and natural)
-    "아무거나 물어보세요",                         // Korean (polite, casual-friendly tone)
-    "なんでも聞いてください",                      // Japanese (natural conversational phrasing)
-    "मुझसे कुछ भी पूछो",                         // Hindi (natural, imperative)
-    "اسألني أي شيء",                              // Arabic (direct and natural)
-    "Запитайте мене про що завгодно",           // Ukrainian
-    "مجھ سے کچھ بھی پوچھیں",                     // Urdu (used Farsi script with correct Urdu phrasing)
-    "Magtanong ka ng kahit ano",                // Tagalog (natural phrasing)
+    "Задайте мне вопрос на любом языке",                   // Russian
+    "用任何语言问我一个问题",                                // Chinese
+    "Hãy hỏi tôi một câu bằng bất kỳ ngôn ngữ nào",        // Vietnamese
+    "Hazme una pregunta en cualquier idioma",              // Spanish
+    "어떤 언어로든 나에게 질문하세요!",                      // Korean
+    "どの言語でも質問してください！",                          // Japanese
+    "मुझसे किसी भी भाषा में सवाल पूछिए!",                  // Hindi
+    "اطرح عليّ سؤالًا بأي لغة!",                            // Arabic
+    "Задайте мені питання будь-якою мовою!",               // Ukrainian
+    "مجھ سے کسی بھی زبان میں سوال پوچھیں!",                // Urdu
+    "Magtanong ka sa akin gamit ang kahit anong wika!",   // Tagalog
 ];
 
 // ───────────────────── Onload Executes ──────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    url = window.srcURL;
     initParticles();
     CycleMessages(DefaultOrbMessages, AltOrbMessages);
-    loadListingData(url);
+    await loadListingData(url);
+    loadFooter();
+    loadBanner();
+    startScroll();
 });
 
 // ──────────────── Global Store ────────────────
@@ -68,9 +72,8 @@ const maxMsgHistoryLimit = 20; // Change at your own risk. Higher values can mea
 // ************************************* END Config *************************************
 
 
-
 // Fetches listing data from JSON
-function loadListingData(url) {
+async function loadListingData(url) {
     return fetch(url)
         .then(res => {
             if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
@@ -115,8 +118,7 @@ function CycleMessages(defaultmsg, altMessagelst) {
         if (isEnglish) {
             currentIndex = (currentIndex + 1) % altMessagelst.length;
             isEnglish = false;
-        }
-        else{
+        } else {
             updateOrbText(defaultmsg);
             isEnglish = true;
         }
@@ -179,7 +181,7 @@ function initParticles() {
 
 
 const PARTICLE_COUNT = 24;
-const track          = document.getElementById('particle-track');
+const track = document.getElementById('particle-track');
 for (let i = 0; i < PARTICLE_COUNT; i++) {
     const p = document.createElement('span');
     p.style.setProperty('--i', i);
@@ -190,7 +192,7 @@ for (let i = 0; i < PARTICLE_COUNT; i++) {
 
 
 // ──────────────── ChatBot ────────────────
-const orbButton     = document.getElementById("chat-orb");
+const orbButton = document.getElementById("chat-orb");
 const chatContainer = document.getElementById("chatbox-container");
 
 orbButton.addEventListener("click", () => { // Opens
@@ -202,17 +204,22 @@ function closeChatbox() {
     const chatContainer = document.getElementById("chatbox-container");
     const chatWindow = document.getElementById("chatbox-window");
 
-    // Step 1: Animate window out
+// Step 1: Animate window out
     chatWindow.classList.add("opacity-0", "blur-sm", "scale-95");
     CycleInputMessages(false, DefaultInputMessage, AltInputMessages);
 
-    // Step 2: AFTER animation finishes, hide container
+// Step 2: AFTER animation finishes, hide container
     setTimeout(() => {
-        // Hide entire container visually and functionally
+// Hide entire container visually and functionally
         chatContainer.classList.add("opacity-0", "pointer-events-none");
+        const chatBox = document.getElementById("chatBox");
+        while (chatBox.children.length > 1) {
+            chatBox.removeChild(chatBox.lastChild);
+        }
+        userInput.value = '';
 
-        // Step 3: AFTER the container is hidden, reset window for next open
-        // Delay ensures that we're not re-showing a fading element
+// Step 3: AFTER the container is hidden, reset window for next open
+// Delay ensures that we're not re-showing a fading element
         setTimeout(() => {
             chatWindow.classList.remove("opacity-0", "blur-sm", "scale-95");
         }, 650); // Don't remove too early — this is key
@@ -312,7 +319,11 @@ document.getElementById("onScreenKeyboard").addEventListener("click", e => {
     } else if (e.target.textContent === "SPACE") {
         userInput.value += " ";
 
-    } else {
+    }
+    else if (action === "clear") {
+        userInput.value = '';
+
+    }else {
         // Normal character key
         const ch = e.target.textContent;
         userInput.value += shiftEnabled ? ch.toUpperCase() : ch.toLowerCase();
@@ -331,24 +342,24 @@ document.getElementById("onScreenKeyboard").addEventListener("click", e => {
 // Handles main chat logic
 const chatQueue = []
 
-function addToChatLog(message, isUser){
+function addToChatLog(message, isUser) {
     if (chatQueue.length > maxMsgHistoryLimit) { // Snips history to max 20 to keep costs down.
         removeMessage(1);
         removeMessage(1);
     }
 
-    if (isUser){
+    if (isUser) {
         chatQueue.push("User: " + message + "\n");
         return;
     }
-    if (!isUser){
+    if (!isUser) {
         chatQueue.push("Bot: " + message + "\n");
     }
 }
 
-function getChatBotReply(input){
+function getChatBotReply(input) {
     disableKeyboard();
-    showTypingBubble("Homewrite AI Agent is Typing…");
+    showTypingBubble("I'm typing the answer to your question!");
     let ChatLog = "";
     for (const msg of chatQueue) {
         ChatLog += msg;
@@ -376,21 +387,22 @@ function getChatBotReply(input){
         })
         .catch(err => console.error("Error from Lambda:", err));
 }
+
 // ──────────────── END ────────────────
 
 // ──────────────── Audio Input ────────────────
 const audioButton = document.getElementById('audioButton');
 
 // ───── state
-let mediaStream          = null;
-let mediaRecorder        = null;   // for native MediaRecorder path
-let audioCtx             = null;   // for fallback
-let scriptNode           = null;   // for fallback
-let wavPcmBuffers        = [];     // Float32 chunks (fallback)
-let mediaChunks          = [];     // Blob chunks (MediaRecorder path)
-let autoStopTimeoutId    = null;
+let mediaStream = null;
+let mediaRecorder = null;   // for native MediaRecorder path
+let audioCtx = null;   // for fallback
+let scriptNode = null;   // for fallback
+let wavPcmBuffers = [];     // Float32 chunks (fallback)
+let mediaChunks = [];     // Blob chunks (MediaRecorder path)
+let autoStopTimeoutId = null;
 
-const RECORD_MIME     = 'audio/wav';
+const RECORD_MIME = 'audio/wav';
 const RECORD_FILENAME = 'recording.wav';
 window.recordedAudioBlob = null;
 
@@ -400,17 +412,17 @@ const supportsWavMR = window.MediaRecorder
     && MediaRecorder.isTypeSupported(RECORD_MIME);
 
 // ──────────────────── start / stop ────────────────────
-async function startAudioRecording () {
+async function startAudioRecording() {
     document.getElementById('recordingIndicator').style.opacity = '1';
     mediaChunks = [];
     wavPcmBuffers = [];
 
-    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaStream = await navigator.mediaDevices.getUserMedia({audio: true});
 
     if (supportsWavMR) {
-        mediaRecorder = new MediaRecorder(mediaStream, { mimeType: RECORD_MIME });
+        mediaRecorder = new MediaRecorder(mediaStream, {mimeType: RECORD_MIME});
         mediaRecorder.ondataavailable = e => mediaChunks.push(e.data);
-        mediaRecorder.onstop          = onRecordingReady;
+        mediaRecorder.onstop = onRecordingReady;
         mediaRecorder.start();
     } else {
         // fallback → collect raw PCM
@@ -428,7 +440,7 @@ async function startAudioRecording () {
     console.log('Recording started');
 }
 
-function stopAudioRecording () {
+function stopAudioRecording() {
     document.getElementById('recordingIndicator').style.opacity = '0';
     if (autoStopTimeoutId) clearTimeout(autoStopTimeoutId);
 
@@ -445,7 +457,7 @@ function stopAudioRecording () {
     console.log('Recording stopped');
 }
 
-function stopFallback () {
+function stopFallback() {
     if (!audioCtx) return;
     scriptNode.disconnect();
     audioCtx.close();
@@ -455,9 +467,9 @@ function stopFallback () {
 }
 
 // ───── WAV encoder (PCM → WAV) ----------------------------------------
-function encodeWav (pcmBufs, sampleRate) {
+function encodeWav(pcmBufs, sampleRate) {
     const length = pcmBufs.reduce((s, b) => s + b.length, 0);
-    const pcm16  = new Int16Array(length);
+    const pcm16 = new Int16Array(length);
     let offset = 0;
     pcmBufs.forEach(buf => {
         for (let i = 0; i < buf.length; i++) {
@@ -470,39 +482,56 @@ function encodeWav (pcmBufs, sampleRate) {
     const byteRate = sampleRate * blockAlign, dataLen = pcm16.byteLength;
 
     const buffer = new ArrayBuffer(44 + dataLen);
-    const dv     = new DataView(buffer);
+    const dv = new DataView(buffer);
     let p = 0;
-    const writeStr = s => { for (let i = 0; i < s.length; i++) dv.setUint8(p++, s.charCodeAt(i)); };
-    const w32 = v => { dv.setUint32(p, v, true); p += 4; };
-    const w16 = v => { dv.setUint16(p, v, true); p += 2; };
+    const writeStr = s => {
+        for (let i = 0; i < s.length; i++) dv.setUint8(p++, s.charCodeAt(i));
+    };
+    const w32 = v => {
+        dv.setUint32(p, v, true);
+        p += 4;
+    };
+    const w16 = v => {
+        dv.setUint16(p, v, true);
+        p += 2;
+    };
 
-    writeStr('RIFF'); w32(36 + dataLen); writeStr('WAVE');
-    writeStr('fmt '); w32(16); w16(1); w16(1);
-    w32(sampleRate); w32(byteRate); w16(blockAlign); w16(16);
-    writeStr('data'); w32(dataLen);
+    writeStr('RIFF');
+    w32(36 + dataLen);
+    writeStr('WAVE');
+    writeStr('fmt ');
+    w32(16);
+    w16(1);
+    w16(1);
+    w32(sampleRate);
+    w32(byteRate);
+    w16(blockAlign);
+    w16(16);
+    writeStr('data');
+    w32(dataLen);
     new Uint8Array(buffer, 44).set(new Uint8Array(pcm16.buffer));
 
-    return new Blob([buffer], { type: RECORD_MIME });
+    return new Blob([buffer], {type: RECORD_MIME});
 }
 
 // ───── finalize
-function onRecordingReady () {
+function onRecordingReady() {
     if (supportsWavMR) {
-        window.recordedAudioBlob = new Blob(mediaChunks, { type: RECORD_MIME });
+        window.recordedAudioBlob = new Blob(mediaChunks, {type: RECORD_MIME});
     }
     console.log('Audio blob stored:', window.recordedAudioBlob);
-     getTranscription();
+    getTranscription();
 }
 
 // ───── DOM wiring
-audioButton.addEventListener('mousedown',  startAudioRecording);
-audioButton.addEventListener('mouseup',    stopAudioRecording);
+audioButton.addEventListener('mousedown', startAudioRecording);
+audioButton.addEventListener('mouseup', stopAudioRecording);
 audioButton.addEventListener('touchstart', startAudioRecording);
-audioButton.addEventListener('touchend',   stopAudioRecording);
+audioButton.addEventListener('touchend', stopAudioRecording);
 
-async function getTranscription () {
+async function getTranscription() {
     inputBox.value = "";
-    showTypingBubble("Homewrite AI agent is listening...")
+    showTypingBubble("Once your question appears in the box, Press send")
     disableKeyboard();
     const audioButton = document.getElementById('audioButton');
     if (audioButton) {
@@ -511,7 +540,9 @@ async function getTranscription () {
     }
 
     if (!window.recordedAudioBlob) {
-        hideTypingBubble(); enableKeyboard(); return;
+        hideTypingBubble();
+        enableKeyboard();
+        return;
     }
 
     const fd = new FormData();
@@ -519,17 +550,20 @@ async function getTranscription () {
 
     const ctrl = new AbortController();
     const timer = setTimeout(() => {
-        ctrl.abort(); addToChatLog('Sorry, transcription timed out.', false);
+        ctrl.abort();
+        addToChatLog('Sorry, transcription timed out.', false);
     }, 10_000);
 
     try {
-        const r = await fetch(voiceBackend, { method: 'POST', body: fd, signal: ctrl.signal });
+        const r = await fetch(voiceBackend, {method: 'POST', body: fd, signal: ctrl.signal});
         const data = await r.json();
         inputBox.value = data.text;
     } catch (e) {
         if (e.name !== 'AbortError') console.error(e);
     } finally {
-        clearTimeout(timer); hideTypingBubble(); enableKeyboard();
+        clearTimeout(timer);
+        hideTypingBubble();
+        enableKeyboard();
     }
 }
 
@@ -609,7 +643,7 @@ function openCarouselModal(title, images, description) {
         return;
     }
 
-    images.forEach(({ link, description }) => {
+    images.forEach(({link, description}) => {
         const slide = document.createElement("div");
         slide.className = "flex-shrink-0 w-full h-full";
         slide.innerHTML = `<img src="${link}" alt="${description}" class="w-full h-full object-cover rounded-lg" />`;
@@ -645,8 +679,8 @@ function openCarouselModal(title, images, description) {
 
 
 // ──────────────── Text Modal ────────────────
-const textModal       = document.getElementById("textModal");
-const textModalBody   = document.getElementById("textModalBody");
+const textModal = document.getElementById("textModal");
+const textModalBody = document.getElementById("textModalBody");
 const textModalImage = document.getElementById("textModalImage");
 const imageWrapper = document.getElementById("textModalImageWrapper");
 
@@ -673,6 +707,7 @@ function closeText() {
         document.getElementById("textModalImage").src = ""; // clear it
     }, 1000); // match Tailwind duration
 }
+
 // ──────────────── END ────────────────
 
 // ************************************* Action Logic *************************************
@@ -717,11 +752,12 @@ function ParseFAQ(source) {
     completeFAQs += '</ul>';
     return completeFAQs;
 }
+
 faqBtn.addEventListener("click", () => {
     if (cachedFAQ === null) {
         cachedFAQ = ParseFAQ(ListingData);
     }
-    OpenText("FAQs",cachedFAQ);
+    OpenText("FAQs", cachedFAQ);
 })
 
 // ──────────────── END ────────────────
@@ -733,15 +769,64 @@ ownerHello.addEventListener("click", () => {
 })
 // ──────────────── END ────────────────
 
-// ──────────────── Buy and Sell with Homewrite  ────────────────
-const buySellWithHomewriteBtn = document.getElementById("buySellWithHomewriteBtn");
-buySellWithHomewriteBtn.addEventListener("click", () => {
-    OpenText("Buy and Sell With Homewrite!", ListingData.buyAndSellWithHomeWrite.text);
-    addImageToText(ListingData.buyAndSellWithHomeWrite.image);
+// ──────────────── Make an Offer  ────────────────
+const makeAnOfferBtn = document.getElementById("makeAnOfferBtn");
+makeAnOfferBtn.addEventListener("click", () => {
+    OpenText("Make an Offer with Homewrite today", ListingData.makeAnOffer.text);
+    addImageToText(ListingData.makeAnOffer.image);
 })
-
 // ──────────────── END ────────────────
 
 // ************************************* END Action Logic *************************************
+
+// ************************************* START Banner Logic *************************************
+
+function startScroll(){
+    const track = document.querySelector('.banner__track');
+    const text = document.querySelector('.banner__text');
+    if (track && text) {
+        const textWidth = text.offsetWidth;
+        const speed = 100; // pixels per second
+        const duration = (textWidth * 2) / speed;
+
+        track.style.animationDuration = `${duration}s`;
+}
+}
+
+function loadBanner() {
+    const bannerConfig = ListingData?.banner;
+
+    if (!bannerConfig || bannerConfig.display === false) {
+        return; // Do nothing if banner is hidden
+    }
+
+    const bannerEl = document.getElementById('promoBanner');
+    const bannerTrack = document.getElementById('bannerTrack');
+
+    const text = bannerConfig.content;
+
+    bannerTrack.innerHTML = `
+    <span class="banner__text px-8">${text}</span>
+    <span class="banner__text px-8">${text}</span>
+  `;
+
+    bannerEl.classList.remove('hidden');
+}
+
+
+    function loadFooter() {
+        document.getElementById('footerHeader').textContent = ListingData.footer.header;
+        document.getElementById('footerName').textContent = ListingData.footer.name;
+        document.getElementById('footerTitle').innerHTML = ListingData.footer.title.replace(/\n/g, "<br>");
+
+        const emailElem = document.getElementById('footerEmail');
+        emailElem.textContent = ListingData.footer.email;
+        emailElem.href = `mailto:${ListingData.footer.email}`;
+
+        const phoneElem = document.getElementById('footerPhone');
+        phoneElem.textContent = ListingData.footer.phone;
+        phoneElem.href = `tel:${ListingData.footer.phone.replace(/\D/g, '')}`;
+    }
+
 
 

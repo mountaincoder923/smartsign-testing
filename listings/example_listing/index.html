@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>window.srcURL = "listingdata.json";</script>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <title>HOMEWRITE Display — OptiSign Full-Screen</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+    <style>
+        /* 1. FIXED ROOT & LAYOUT PADDING */
+        html {
+            font-size: 16px;
+        }
+        body {
+            margin: 0;
+            overflow: visible;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            /*min-height: calc(100vh - 4rem);*/
+        }
+
+        /* 2. GLOBAL VARIABLES */
+        :root {
+            /* Orb & banner */
+            --orb-primary: #3b2ce1;
+            --orb-secondary: #c115ca;
+            --orb-glow: rgb(136, 215, 250);
+            --orb-gradient-speed: 6s;
+            --orb-breathe-speed: 4s;
+
+            --gradient-start: #3b2ce1;
+            --gradient-end: #c115ca;
+            --text-color: #c8edff;
+            --banner-glow: rgba(255, 255, 255, 0.6);
+            --banner-glow-speed: 3s;
+
+            /* Chatbox pulse */
+            --chatbox-pulse-color: rgb(137, 154, 255);
+            --chatbox-pulse-spread: 8px;
+            --chatbox-pulse-duration: 3s;
+        }
+
+        .banner {
+            position: relative;
+            width: 100%;
+            height: 3rem;
+            line-height: 3rem;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .banner__track {
+            display: flex;
+            animation: scroll-banner linear infinite;
+        }
+
+        .banner__text {
+            font-size: 1.35rem;
+            font-weight: normal;
+            color: var(--text-color);
+            animation: shimmer var(--banner-glow-speed) ease-in-out infinite;
+        }
+
+        @keyframes scroll-banner {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.7; text-shadow: 0 0 2px var(--banner-glow); }
+            50%      { opacity: 1;   text-shadow: 0 0 8px var(--banner-glow); }
+        }
+
+        /* 4. ORB */
+        .orb-container {
+            width: 20rem;
+            height: 20rem;
+            position: relative;
+            isolation: isolate;
+        }
+        @keyframes orb-gradient-move {
+            0%   { background-position: 0 50%; }
+            100% { background-position: 50% 100%; }
+        }
+        @keyframes orb-breathe {
+            0%,100% { transform: scale(1); }
+            50%     { transform: scale(1.05); }
+        }
+        @keyframes orb-shadow {
+            0%,100% { box-shadow: 0 0 0 var(--orb-glow); }
+            50%     { box-shadow: 0 0 200px var(--orb-glow); }
+        }
+        @keyframes orb-swirl-rotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        @keyframes orb-text-glow {
+            0%,100% { opacity: .7; text-shadow: 0 0 2px var(--orb-glow); }
+            50%     { opacity: 1;   text-shadow: 0 0 8px var(--orb-glow); }
+        }
+
+        #chat-orb {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.85);
+            position: relative;
+            outline: none;
+            animation:
+                    orb-breathe var(--orb-breathe-speed) ease-in-out infinite,
+                    orb-shadow  var(--orb-breathe-speed) ease-in-out infinite;
+        }
+        #chat-orb::before {
+            content: "";
+            position: absolute;
+            inset: -35%;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--orb-secondary) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(56px);
+            z-index: -1;
+        }
+        .orb-inner {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(
+                    from 0deg,
+                    var(--orb-primary) 0deg,
+                    var(--orb-secondary) 120deg,
+                    var(--orb-primary) 240deg,
+                    var(--orb-secondary) 360deg
+            );
+            filter: blur(15px);
+            box-shadow: 0 0 60px var(--orb-secondary);
+            animation: orb-swirl-rotate 20s linear infinite;
+        }
+        .orb-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            backdrop-blur: 8px;
+        }
+        #orb-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 3;
+            color: white;
+            font-size: 1rem;
+            animation: orb-text-glow 2s ease-in-out infinite;
+        }
+        .orbit-dot {
+            position: absolute;
+            top: 32.5%;
+            left: 50%;
+            z-index: -1;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--orb-secondary);
+            box-shadow: 0 0 6px var(--orb-glow), 0 0 12px var(--orb-glow);
+            transform-origin: center;
+        }
+
+        /* 5. SECTIONS GRID */
+        #sections {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 16rem;
+            gap: 1.5rem;
+            padding: 0 1.5rem 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            #sections {
+                grid-auto-rows: 20rem;
+            }
+        }
+
+        /*****************************************************************
+         * INFO CARD COMPONENT STYLES (from your original block)
+         *****************************************************************/
+        .info-card {
+            border-radius: .9rem;
+            overflow: hidden;
+            background: transparent;
+            margin: 0;
+        }
+        .info-card > summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            padding: 1.4rem;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, .08);
+            border-radius: .9rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: background .25s, box-shadow .25s, border-color .25s;
+        }
+        .info-card > summary:hover,
+        .info-card > summary:focus-visible {
+            background: #f5f5f7;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .info-card[open] > summary {
+            background: #f9f9fb;
+            border-color: rgba(0, 0, 0, .06);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+        }
+        .info-card summary::marker,
+        .info-card summary::-webkit-details-marker {
+            content: none;
+        }
+        @keyframes pulse-blue-border {
+            0%   { box-shadow: 0 0 0 0 rgb(193, 21, 202); }
+            70%  { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        button.info-card {
+            border: 1px solid rgb(193, 21, 202);
+            animation: pulse-blue-border 3s ease-out infinite;
+        }
+
+        /*****************************************************************
+         * CHATBOX & ONSCREEN KEYBOARD (original)
+         *****************************************************************/
+        @keyframes chatbox-pulse-border {
+            0%   { box-shadow: 0 0 0 0 var(--chatbox-pulse-color); }
+            70%  { box-shadow: 0 0 0 var(--chatbox-pulse-spread) rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        #chatbox-window {
+            border: 3px solid var(--chatbox-pulse-color);
+            border-radius: 1rem;
+            animation: chatbox-pulse-border var(--chatbox-pulse-duration) ease-out infinite;
+            max-width: 1400px;
+            max-height: 1200px;
+        }
+        @media (min-width: 1600px) {
+            #chatbox-window {
+                max-width: 1600px;
+                max-height: 1400px;
+            }
+        }
+        #chatbox-window .key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            padding: 1rem 1.2rem;
+            margin: 0.1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            user-select: none;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+        .key.spacebar {
+            min-width: 12rem;
+            padding: 0 3rem;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body class="text-black">
+<main class="flex flex-col w-screen lg:h-screen">
+    <!-- Header -->
+    <div class="bg-white w-full flex items-center justify-center py-4 shadow-md">
+        <img src="assets/homewrite_logo.png" alt="HOMEWRITE Logo" class="h-36 w-auto"/>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner overflow-hidden hidden" id="promoBanner">
+        <div class="banner__track whitespace-nowrap flex will-change-transform" id="bannerTrack">
+            <!-- JS will populate banner text here -->
+        </div>
+    </div>
+
+    <!-- Orb -->
+    <section class="relative flex-[0.7] flex items-center justify-center overflow-visible mt-28">
+        <div class="orb-container">
+            <button id="chat-orb" aria-label="Open Chatbot">
+                <div class="orb-inner"></div>
+                <div class="orb-overlay"></div>
+                <div id="orb-text" class="text-white/90 text-4xl font-medium tracking-wide"></div>
+                <div id="particle-track" class="absolute inset-0"></div>
+            </button>
+        </div>
+    </section>
+
+    <!-- Chatbox (Initially Hidden) -->
+    <div id="chatbox-container"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-1000">
+        <div id="chatbox-window"
+             class="w-[90vw] h-[95vh] max-w-[1400px] max-h-[1200px] bg-white/90 backdrop-blur-md rounded-xl shadow-xl flex flex-col overflow-hidden transition-all duration-1000 ease-in-out">
+            <!-- Exit Button -->
+            <div class="flex justify-end p-2 space-x-2">
+                <button onclick="closeChatbox()"
+                        class="text-2xl text-gray-500 hover:text-black transition-transform hover:scale-110">&times;
+                </button>
+            </div>
+
+            <!-- Recording Indicator -->
+            <div id="recordingIndicator"
+                 class="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-3 text-green-500 font-bold text-base opacity-0 transition-opacity duration-300">
+                <div class="relative w-5 h-5">
+                    <div class="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75"></div>
+                    <div class="absolute inset-0 rounded-full bg-green-500"></div>
+                </div>
+                <span>Ask your question, I'm listening...</span>
+            </div>
+
+
+            <!-- Chat Area -->
+            <div class="flex flex-col flex-[2] overflow-hidden">
+                <div id="chatBox" class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                    <div class="flex justify-start">
+                        <div class="bg-gray-200 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%]">Hello! How can I help
+                            you today?
+                        </div>
+                    </div>
+                </div>
+                <div id="typingBubble" class="flex justify-start hidden">
+                    <div class="flex justify-center">
+                        <div id="typingText"
+                             class="bg-gray-200 text-gray-800 px-4 py-2 rounded-3xl max-w-[100%] animate-pulse">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t bg-white">
+                    <form id="chatForm" class="flex gap-2">
+                        <label for="userInput" class="sr-only">Your message</label>
+
+                        <!--Remove hidden tag to reactivate button-->
+                        <button type="button" id="audioButton"
+                                class="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 flex items-center gap-2">
+                            <span class="text-xl select-none">🎤</span>
+                            <span class="select-none">Hold To Talk</span>
+                        </button>
+                        <input id="userInput" type="text" inputmode="none" placeholder="Type your message..."
+                               class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                        <button type="submit"
+                                class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 select-none">
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- On‑screen Keyboard -->
+            <div id="onScreenKeyboard"
+                 class="flex-[1] bg-white/95 border-t p-3 space-y-2 overflow-y-auto select-none">
+
+                <!-- Row 1 -->
+                <div class="flex justify-center gap-1">
+                    <button class="key px-3 py-2">Q</button>
+                    <button class="key px-3 py-2">W</button>
+                    <button class="key px-3 py-2">E</button>
+                    <button class="key px-3 py-2">R</button>
+                    <button class="key px-3 py-2">T</button>
+                    <button class="key px-3 py-2">Y</button>
+                    <button class="key px-3 py-2">U</button>
+                    <button class="key px-3 py-2">I</button>
+                    <button class="key px-3 py-2">O</button>
+                    <button class="key px-3 py-2">P</button>
+                </div>
+
+                <!-- Row 2 (½-key indent) -->
+                <div class="flex justify-center gap-1">
+                    <span class="w-3"></span>
+                    <button class="key px-3 py-2">A</button>
+                    <button class="key px-3 py-2">S</button>
+                    <button class="key px-3 py-2">D</button>
+                    <button class="key px-3 py-2">F</button>
+                    <button class="key px-3 py-2">G</button>
+                    <button class="key px-3 py-2">H</button>
+                    <button class="key px-3 py-2">J</button>
+                    <button class="key px-3 py-2">K</button>
+                    <button class="key px-3 py-2">L</button>
+                </div>
+
+                <!-- Row 3 (full-key indent) -->
+                <div class="flex justify-start gap-1 pl-2">
+                    <!-- Bigger Shift, left-aligned -->
+                    <button
+                            class="key px-4 py-3 text-lg font-semibold"
+                            data-action="shift">
+                        ⇧
+                    </button>
+                    <span class="w-12"></span>
+                    <!-- Letter keys -->
+                    <button class="key px-3 py-2">Z</button>
+                    <button class="key px-3 py-2">X</button>
+                    <button class="key px-3 py-2">C</button>
+                    <button class="key px-3 py-2">V</button>
+                    <button class="key px-3 py-2">B</button>
+                    <button class="key px-3 py-2">N</button>
+                    <button class="key px-3 py-2">M</button>
+
+                    <!-- Optional trailing spacer if you want some right breathing room -->
+                    <span class="w-6"></span>
+                </div>
+
+                <!-- Action row -->
+                <div class="flex justify-center items-center gap-1 mt-2">
+                    <!-- Punctuation -->
+                    <button class="key px-3 py-2">,</button>
+                    <button class="key px-3 py-2">.</button>
+                    <button class="key px-3 py-2">?</button>
+
+                    <!-- Clear -->
+
+                    <!-- Spacebar -->
+                    <button class="key spacebar flex-1 px-8 py-2">SPACE</button>
+
+                    <!-- Backspace (right-aligned) -->
+                    <button
+                            class="key px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded transition"
+                            data-action="backspace"
+                    >
+                        ⌫
+                    </button>
+                    <button
+                            class="key px-3 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-semibold rounded transition"
+                            data-action="clear"
+                    >
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Info Cards -->
+    <section id="sections" class="mt-60">
+        <!-- Home Details -->
+        <button id="homeDetailsBtn"
+                class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-house text-6xl" style="color:#3B2CE1;"></i>
+            <span class="text-2xl font-medium">Home Details</span>
+        </button>
+        <!-- Owner Upgrades -->
+        <button id="ownerUpgradesBtn"
+                class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-screwdriver-wrench text-6xl" style="color:#3B2CE1;"></i>
+            <span class="text-2xl font-medium">Owner Upgrades</span>
+        </button>
+        <!-- Plans -->
+        <button id="plansBtn"
+                class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-map text-6xl" style="color:#3B2CE1;"></i>
+            <span class="text-2xl font-medium">Plans</span>
+        </button>
+        <!-- FAQs -->
+        <button id="faqsBtn"
+                class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-regular fa-circle-question text-6xl" style="color:#3B2CE1;"></i>
+            <span class="text-2xl font-medium">FAQs</span>
+        </button>
+        <!-- Owner Hello -->
+        <button id="ownerHelloBtn"
+                class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-handshake-simple text-6xl" style="color:#3B2CE1;"></i>
+            <span class="text-2xl font-medium">Owner Hello</span>
+        </button>
+        <!-- Work With Us -->
+        <button id="makeAnOfferBtn"
+                class="info-card flex flex-col items-center justify-center gap-2 bg-white rounded-xl shadow h-full text-center">
+            <i class="fa-solid fa-feather text-6xl" style="color:#3B2CE1;"></i>
+            <span class="text-2xl font-large">Make an Offer</span>
+        </button>
+    </section>
+
+    <!-- Contact Details Footer -->
+    <section class="fixed bottom-0 left-0 w-full bg-gradient-to-r from-[#3B2CE1] to-[#C115CA] py-2 z-50 text-[115%]">
+        <div class="max-w-4xl mx-auto px-4 text-center text-white text-sm mb-1">
+            <span id="footerHeader" class="uppercase font-semibold tracking-wide"></span>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-white text-sm">
+            <!-- Name -->
+            <div class="flex flex-col items-start sm:items-center">
+                <span class="uppercase text-sm font-semibold tracking-wide opacity-90">Name</span>
+                <span id="footerName" class="text-xs font-medium"></span>
+            </div>
+            <!-- Title -->
+            <div class="flex flex-col items-start sm:items-center">
+                <span class="uppercase text-sm font-semibold tracking-wide opacity-90">Title</span>
+                <span id="footerTitle" class="text-xs font-medium"></span>
+            </div>
+            <!-- Email -->
+            <div class="flex flex-col items-start sm:items-center">
+                <span class="uppercase text-sm font-semibold tracking-wide opacity-90">Email</span>
+                <a id="footerEmail" href="#" class="text-xs text-white hover:underline font-medium"></a>
+            </div>
+            <!-- Phone -->
+            <div class="flex flex-col items-start sm:items-center">
+                <span class="uppercase text-sm font-semibold tracking-wide opacity-90">Phone</span>
+                <a id="footerPhone" href="#" class="text-xs text-white hover:underline font-medium"></a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- Modals -->
+<div id="carouselModal"
+     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-1000">
+    <div class="bg-white rounded-xl overflow-hidden relative p-8"
+         style="width:90vw;max-width:1280px;height:auto;max-height:90vh;">
+        <button id="carouselCloseBtn" class="absolute top-4 right-4 z-50">&times;</button>
+        <h2 id="carouselModalTitle" class="text-2xl font-semibold text-center mb-4">Gallery</h2>
+
+        <div class="relative aspect-video overflow-hidden">
+            <div id="modalCarouselTrack" class="flex transition-transform duration-700 ease-out h-full"></div>
+            <button id="modalPrev" class="absolute top-1/2 left-2 -translate-y-1/2 p-2 bg-white rounded-full">&#8592;
+            </button>
+            <button id="modalNext" class="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-white rounded-full">&#8594;
+            </button>
+        </div>
+
+        <div class="mt-4 px-4">
+            <div id="modalCarouselCaption" class="text-center italic text-gray-700">Loading…</div>
+        </div>
+
+        <div class="mt-6 px-4 py-3 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+            <div id="carouselStaticDescription" class="text-sm text-center text-gray-600">All layouts are for
+                demonstration purposes only.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="textModal"
+     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-1000 hidden">
+    <div class="bg-white rounded-xl overflow-hidden relative p-8"
+         style="width:90vw;max-width:1280px;height:auto;max-height:90vh;">
+        <button onclick="closeText()" class="absolute top-4 right-4 text-2xl">&times;</button>
+        <h2 id="textModalTitle" class="text-2xl font-semibold mb-4">Details</h2>
+        <div id="textModalBody" class="text-base leading-relaxed">No details available.</div>
+        <div id="textModalImageWrapper" class="w-full flex justify-center mt-4 hidden">
+            <img id="textModalImage" src="" alt="" class="max-w-[50%] max-h-[40vh] object-contain rounded-md shadow"/>
+        </div>
+    </div>
+</div>
+
+<script src="../../script.js" defer></script>
+</body>
+</html>
